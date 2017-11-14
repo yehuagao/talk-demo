@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "0e38e8e1748aae67e607"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "cc5155c566dbc304e43f"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -16014,6 +16014,7 @@ var AppComponent = function (_Component) {
 
             //接受退出信息
             socket.on('logout', function (data) {
+                this.setState({ popMsg: '' });
                 console.log('退出信息', data);
                 if (data.userName != 'admin') {
                     this.setState({ quitName: data.userName });
@@ -16024,6 +16025,7 @@ var AppComponent = function (_Component) {
 
             //接受登录信息
             socket.on('login', function (data) {
+                this.setState({ popMsg: '' });
                 if (data) {
                     this.setState({ nameText: data.currenData.userName });
                     this.setState({ onlineCount: data.onlineCount });
@@ -16053,6 +16055,8 @@ var AppComponent = function (_Component) {
                 createDiv.appendChild(createspan);
                 createLi.appendChild(createDiv);
                 this.refs.showMsg.appendChild(createLi);
+
+                this.refs.showMsg.scrollTo(0, this.refs.showMsg.scrollHeight);
             }.bind(this));
         }
     }, {
@@ -16106,8 +16110,8 @@ var AppComponent = function (_Component) {
             var char = e.which || e.keyCode;
             if (char == 13) {
                 this.sendMsg();
+                e.preventDefault();
             }
-            e.preventDefault();
         }
     }, {
         key: 'enterName',
@@ -16115,8 +16119,8 @@ var AppComponent = function (_Component) {
             var char = e.which || e.keyCode;
             if (char == 13) {
                 this.sendName();
+                e.preventDefault();
             }
-            e.preventDefault();
         }
     }, {
         key: 'render',

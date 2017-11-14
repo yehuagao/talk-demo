@@ -1,0 +1,33 @@
+.appmain{
+	position:relative;
+	width:1000px;
+	margin:30px auto;
+	overflow:hidden;
+	.showMsg{
+		height:500px;
+		border:1px solid #ddd;
+		border-radius:3px;
+	}
+	.input-name{
+		display:inline-block;
+		width:300px;
+	}
+	.inputBox{
+		margin-top:10px;
+	}
+	.spanSty{
+		display:block;
+		background:#ddd;
+		line-height:36px;
+		padding:0 10px;
+		border-radius:3px;
+		margin-bottom:10px;
+	}
+}
+h6{
+	margin:0;padding:0;
+}
+ul,li{
+	overflow:hidden;
+	margin:0;padding:0;
+}

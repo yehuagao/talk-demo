@@ -1,0 +1,12 @@
+.pop-box{
+	opacity:0;
+	animation:move 4s;
+	position:absolute;
+	top:0;
+	left:50%;
+}
+@keyframes move
+{
+	0% {opacity:1;top:0;}
+	100% {opacity:0;top:150px}
+}

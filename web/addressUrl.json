@@ -1,0 +1,31 @@
+{
+	"url":"dev_server",
+	"dev_server":{
+		"cookieDomain" : "192.168.1.21:8080",
+		"severHost" : "http://192.168.1.96:8081/",
+		"loginUrl" : "http://192.168.1.96:8081/",
+		"frontHost" : "http://192.168.1.21:8888/",
+		"njwHost" : "http://192.168.1.102:8091/"
+	},
+	"test_server":{
+		"cookieDomain" : "192.168.1.21:8080",
+		"severHost" : "http://192.168.1.96:8081/",
+		"loginUrl" : "http://192.168.1.96:8081/",
+		"frontHost":  "http://192.168.1.21:8080/",
+		"njwHost" : "http://192.168.1.102:8091/"
+	},
+	"yfbTest_server":{
+		"cookieDomain" : "192.168.1.21:8080",
+		"severHost" : "http://192.168.1.96:8081/",
+		"loginUrl" : "http://192.168.1.96:8081/",
+		"frontHost": "http://192.168.1.21:8080/",
+		"njwHost" : "http://192.168.1.102:8091/"
+	},
+	"fb_server":{
+		"cookieDomain" : "192.168.1.21:8080",
+		"severHost" : "http://192.168.1.96:8081/",
+		"loginUrl" : "http://192.168.1.96:8081/",
+		"frontHost" : "http://192.168.1.21:8080/",
+		"njwHost" : "http://192.168.1.102:8091/"
+	}
+}

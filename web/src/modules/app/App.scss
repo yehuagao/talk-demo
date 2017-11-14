@@ -8,13 +8,14 @@
 		border:1px solid #ddd;
 		border-radius:3px;
 		padding:10px;
+		overflow:auto;
 	}
 	.input-name{
 		display:inline-block;
 		width:300px;
 	}
 	.inputBox{
-		margin-top:10px;
+		margin:10px 0;
 	}
 	.spanSty{
 		min-width:100px;
@@ -24,6 +25,15 @@
 		padding:0 10px;
 		border-radius:3px;
 		margin-bottom:10px;
+	}
+	button{
+		margin-right:10px;
+	}
+	textarea{
+		margin-bottom:10px;
+	}
+	.log-btn{
+		margin-left:10px;
 	}
 }
 h6{

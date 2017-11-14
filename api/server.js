@@ -9,7 +9,7 @@ var io = require('socket.io')(http);
 var userArray = [];
 var currentId = 0;
 io.on('connection', function(socket){
-    var onlineCount = 1;
+    socket.name = 'admin'
     var onlineUsers = {};
     console.log('新用户连接');
     //监听新用户加入
@@ -27,7 +27,6 @@ io.on('connection', function(socket){
                     if(idx+1 == userArray.length){
                         onlineUsers.userId = userArray.length + 1;
                         onlineUsers.userName = obj.userName;
-                        onlineCount = userArray.length;
                         userArray.push(onlineUsers);
                         currentId = idx + 1;
                         console.log(7777777777)
@@ -37,27 +36,31 @@ io.on('connection', function(socket){
         }
         console.log(currentId)
         //向所有用户客户端广播
-        io.emit('login', {onlineCount: onlineCount, currenData: userArray[currentId]})
+        io.emit('login', {onlineCount: userArray.length, currenData: userArray[currentId]})
         console.log(userArray)
         console.log('current',userArray[currentId])
     })
 
-    socket.on('disconnect', function(){
-        if(onlineUsers.hasOwnProperty(socket.name)){
-            //退出用户的信息
-            var obj = {userid:socket.name, userName:onlineUsers[socket.name]};
-
-            //删除
-            delete onlineUsers[socket.name];
-            //在线人数-1
-            onlineCount--;
-
-            //向所有客户端广播用户退出
-            io.emit('logout', {onlineUsers:onlineUsers, onlineCount:onlineCount});
-            console.log(obj.userName+'退出了');
-        }
+    //监听客户端退出事件
+    socket.on('logout', function(obj){
+        deal(obj.userName)
     })
 
+    socket.on('disconnect', function(){
+        deal(socket.name)
+    })
+
+    function deal(matchName){
+    //遍历数组，进行处理
+        userArray.forEach(function(item, index){
+            if(item.userName == matchName){
+                userArray.splice(index, 1);
+            }
+        })
+        io.emit('logout', {onlineCount: userArray.length, userName: socket.name});
+        
+        console.log(matchName,'退出')
+    }
 
     //监听用户发布信息
     socket.on('message', function(obj){

@@ -13,7 +13,7 @@ class popComponent extends Component {
 	render(){
 		return (
 			<div className="pop-box">
-				{this.props.text}进入Together chat
+				{this.props.text}
 			</div>
 		)
 	}

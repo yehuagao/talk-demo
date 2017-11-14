@@ -13,6 +13,7 @@ class AppComponent extends Component {
 
         this.state = {
             nameText:'',
+            currenName:'',
             onlineCount:0
         }
     }
@@ -29,37 +30,54 @@ class AppComponent extends Component {
         //接受登录信息
         socket.on('login', function(data){
             console.log('登录信息',data)
-            this.setState({nameText:data.user.userName});
-            this.setState({onlineCount:data.onlineCount});
+            this.setState({nameText: data.currenData.userName});
+            this.setState({onlineCount: data.onlineCount});
         }.bind(this))
+
         socket.on('message', function(data){
-            // console.log(this.refs.showMsg)
-            // console.log(data)
+            
             var createspan = document.createElement('span');
             var createH6 = document.createElement('h6');
+            var createDiv = document.createElement('div');
             var createLi = document.createElement('li');
-            createH6.innerText = this.state.nameText + ':';
+
+            createH6.innerText = data.userName + ':';
             createspan.className = 'spanSty';
             createspan.innerText = data.content;
-            createLi.appendChild(createH6);
-            createLi.appendChild(createspan);
-            this.refs.showMsg.appendChild(createLi);
-            this.refs.showMsg.appendChild('<br/>')
-            if(data.userName == this.state.nameText){
-                createLi.style.float= 'right';
-            }else{
-                createLi.style.float= 'left';
-            }
-        }.bind(this))
-        // console.log('当前登录',this.state.nameText)
-    }
 
+            if(data.userName == this.state.currenName){
+                createDiv.style.float = 'right';
+            }else{
+                createDiv.style.float= 'left';
+            }
+
+            createDiv.appendChild(createH6);
+            createDiv.appendChild(createspan);
+            createLi.appendChild(createDiv);
+            this.refs.showMsg.appendChild(createLi);
+        }.bind(this))
+        
+    }
+    setCookie(name,value){
+        var Days = 30;
+        var exp = new Date();
+        exp.setTime(exp.getTime() + Days*24*60*60*1000);
+        document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
+    }
+    getCookie(name){
+        var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+        if(arr=document.cookie.match(reg)) return unescape(arr[2]);
+        else return null;
+    }
     sendName(){
         socket.emit('login',{userName:this.refs.name.value})
         socket.on('connect',function(){
             // console.log('socket连接成功')
         })
         //socket.emit('message',{content:this.refs.name.value})
+        this.setCookie('currentUser', this.refs.name.value);
+        this.setState({currenName:this.getCookie('currentUser')})
+        console.log(this.state.currenName)
     }
     quit(){
         socket.emit('disconnect', function () {
@@ -67,14 +85,14 @@ class AppComponent extends Component {
         });
     }
     sendMsg(){
-        socket.emit('message',{userName:this.refs.name.value, content:this.refs.msg.value})
+        socket.emit('message',{userName:this.state.currenName, content:this.refs.msg.value})
     }
     render() {
         return (
         	   <div className="appmain">
                     {this.state.nameText ? <Popbox text={this.state.nameText}/> : ''}
                     <div style={{overflow:'hidden'}}><h1>Together chat</h1> <span>在线人数：{this.state.onlineCount}</span>
-                        <span style={{float:'right'}}>当前登录为：{this.state.nameText}</span>
+                        <span style={{float:'right'}}>当前登录为：{this.state.currenName}</span>
                     </div>
                     <ul className="showMsg" ref="showMsg"></ul>
                     

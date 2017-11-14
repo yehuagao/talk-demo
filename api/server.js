@@ -6,42 +6,40 @@ router.main(express);
 
 var http = require('http').Server(express)
 var io = require('socket.io')(http);
-var onlineUsers = {};
-var onlineCount = 0;
-var cout = 1;
 var userArray = [];
-
+var currentId = 0;
 io.on('connection', function(socket){
-    var currentId = 0;
-    console.log('用户连接');
-    //console.log('socket1',socket)
+    var onlineCount = 1;
+    var onlineUsers = {};
+    console.log('新用户连接');
     //监听新用户加入
     socket.on('login', function(obj){
         //保存用户标识
         socket.name = obj.userName;
-        //console.log('socket2',socket)
-        //检查在线列表
-        if(!onlineUsers.hasOwnProperty(onlineUsers.userId)) {
-            onlineUsers[userId] = cout;
-            onlineCount++;
-            userArray.push(onlineUsers)
+        
+        if(userArray.length == 0) {
+            onlineUsers.userId = 1;
+            onlineUsers.userName = obj.userName;
+            userArray.push(onlineUsers);
         }else{
             userArray.forEach(function(item, idx){
-                if(item.userId != obj.userId){
+                if(item.userName != obj.userName){
                     if(idx+1 == userArray.length){
-                        userArray.push(obj);
-                        onlineCount++;
+                        onlineUsers.userId = userArray.length + 1;
+                        onlineUsers.userName = obj.userName;
+                        onlineCount = userArray.length;
+                        userArray.push(onlineUsers);
+                        currentId = idx + 1;
+                        console.log(7777777777)
                     }
-                }else{
-                    currentId = idx;
                 }
             })
         }
-
+        console.log(currentId)
         //向所有用户客户端广播
-        io.emit('login', {onlineUsers: onlineUsers, onlineCount: onlineCount, user:obj, currenData: userArray[currentId]})
-        console.log(obj.userName + '加入chat')
-        console.log('在线用户',onlineUsers)
+        io.emit('login', {onlineCount: onlineCount, currenData: userArray[currentId]})
+        console.log(userArray)
+        console.log('current',userArray[currentId])
     })
 
     socket.on('disconnect', function(){
@@ -55,7 +53,7 @@ io.on('connection', function(socket){
             onlineCount--;
 
             //向所有客户端广播用户退出
-            io.emit('logout', {onlineUsers:onlineUsers, onlineCount:onlineCount, user:obj});
+            io.emit('logout', {onlineUsers:onlineUsers, onlineCount:onlineCount});
             console.log(obj.userName+'退出了');
         }
     })

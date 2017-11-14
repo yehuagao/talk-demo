@@ -7,6 +7,7 @@
 		height:500px;
 		border:1px solid #ddd;
 		border-radius:3px;
+		padding:10px;
 	}
 	.input-name{
 		display:inline-block;
@@ -16,7 +17,8 @@
 		margin-top:10px;
 	}
 	.spanSty{
-		display:block;
+		min-width:100px;
+		display:inline-block;
 		background:#ddd;
 		line-height:36px;
 		padding:0 10px;

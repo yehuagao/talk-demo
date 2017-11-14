@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "5e57bb9bf1227f01625d"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "fcadba37876ef3a011e1"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -2823,7 +2823,7 @@ exports = module.exports = __webpack_require__(32)(undefined);
 
 
 // module
-exports.push([module.i, ".appmain {\n  position: relative;\n  width: 1000px;\n  margin: 30px auto;\n  overflow: hidden; }\n  .appmain .showMsg {\n    height: 500px;\n    border: 1px solid #ddd;\n    border-radius: 3px; }\n  .appmain .input-name {\n    display: inline-block;\n    width: 300px; }\n  .appmain .inputBox {\n    margin-top: 10px; }\n  .appmain .spanSty {\n    display: block;\n    background: #ddd;\n    line-height: 36px;\n    padding: 0 10px;\n    border-radius: 3px;\n    margin-bottom: 10px; }\n\nh6 {\n  margin: 0;\n  padding: 0; }\n\nul, li {\n  overflow: hidden;\n  margin: 0;\n  padding: 0; }\n", ""]);
+exports.push([module.i, ".appmain {\n  position: relative;\n  width: 1000px;\n  margin: 30px auto;\n  overflow: hidden; }\n  .appmain .showMsg {\n    height: 500px;\n    border: 1px solid #ddd;\n    border-radius: 3px;\n    padding: 10px; }\n  .appmain .input-name {\n    display: inline-block;\n    width: 300px; }\n  .appmain .inputBox {\n    margin-top: 10px; }\n  .appmain .spanSty {\n    min-width: 100px;\n    display: inline-block;\n    background: #ddd;\n    line-height: 36px;\n    padding: 0 10px;\n    border-radius: 3px;\n    margin-bottom: 10px; }\n\nh6 {\n  margin: 0;\n  padding: 0; }\n\nul, li {\n  overflow: hidden;\n  margin: 0;\n  padding: 0; }\n", ""]);
 
 // exports
 
@@ -15997,6 +15997,7 @@ var AppComponent = function (_Component) {
 
         _this.state = {
             nameText: '',
+            currenName: '',
             onlineCount: 0
         };
         return _this;
@@ -16016,28 +16017,47 @@ var AppComponent = function (_Component) {
             //接受登录信息
             socket.on('login', function (data) {
                 console.log('登录信息', data);
-                this.setState({ nameText: data.user.userName });
+                this.setState({ nameText: data.currenData.userName });
                 this.setState({ onlineCount: data.onlineCount });
             }.bind(this));
+
             socket.on('message', function (data) {
-                // console.log(this.refs.showMsg)
-                // console.log(data)
+
                 var createspan = document.createElement('span');
                 var createH6 = document.createElement('h6');
+                var createDiv = document.createElement('div');
                 var createLi = document.createElement('li');
-                createH6.innerText = this.state.nameText + ':';
+
+                createH6.innerText = data.userName + ':';
                 createspan.className = 'spanSty';
                 createspan.innerText = data.content;
-                createLi.appendChild(createH6);
-                createLi.appendChild(createspan);
-                this.refs.showMsg.appendChild(createLi);
-                if (data.userName == this.state.nameText) {
-                    createLi.style.float = 'right';
+
+                if (data.userName == this.state.currenName) {
+                    createDiv.style.float = 'right';
                 } else {
-                    createLi.style.float = 'left';
+                    createDiv.style.float = 'left';
                 }
+
+                createDiv.appendChild(createH6);
+                createDiv.appendChild(createspan);
+                createLi.appendChild(createDiv);
+                this.refs.showMsg.appendChild(createLi);
             }.bind(this));
-            // console.log('当前登录',this.state.nameText)
+        }
+    }, {
+        key: 'setCookie',
+        value: function setCookie(name, value) {
+            var Days = 30;
+            var exp = new Date();
+            exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
+            document.cookie = name + "=" + escape(value) + ";expires=" + exp.toGMTString();
+        }
+    }, {
+        key: 'getCookie',
+        value: function getCookie(name) {
+            var arr,
+                reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+            if (arr = document.cookie.match(reg)) return unescape(arr[2]);else return null;
         }
     }, {
         key: 'sendName',
@@ -16047,6 +16067,9 @@ var AppComponent = function (_Component) {
                 // console.log('socket连接成功')
             });
             //socket.emit('message',{content:this.refs.name.value})
+            this.setCookie('currentUser', this.refs.name.value);
+            this.setState({ currenName: this.getCookie('currentUser') });
+            console.log(this.state.currenName);
         }
     }, {
         key: 'quit',
@@ -16058,7 +16081,7 @@ var AppComponent = function (_Component) {
     }, {
         key: 'sendMsg',
         value: function sendMsg() {
-            socket.emit('message', { userName: this.refs.name.value, content: this.refs.msg.value });
+            socket.emit('message', { userName: this.state.currenName, content: this.refs.msg.value });
         }
     }, {
         key: 'render',
@@ -16086,7 +16109,7 @@ var AppComponent = function (_Component) {
                         'span',
                         { style: { float: 'right' } },
                         '\u5F53\u524D\u767B\u5F55\u4E3A\uFF1A',
-                        this.state.nameText
+                        this.state.currenName
                     )
                 ),
                 _react2.default.createElement('ul', { className: 'showMsg', ref: 'showMsg' }),

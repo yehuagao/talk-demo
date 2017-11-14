@@ -18,6 +18,7 @@ io.on('connection', function(socket){
         socket.name = obj.userName;
         
         if(userArray.length == 0) {
+            currentId = 0;
             onlineUsers.userId = 1;
             onlineUsers.userName = obj.userName;
             userArray.push(onlineUsers);
@@ -28,13 +29,13 @@ io.on('connection', function(socket){
                         onlineUsers.userId = userArray.length + 1;
                         onlineUsers.userName = obj.userName;
                         userArray.push(onlineUsers);
-                        currentId = idx + 1;
+                        currentId = userArray.length - 1;
                         console.log(7777777777)
                     }
                 }
             })
         }
-        console.log(currentId)
+        console.log('id',currentId)
         //向所有用户客户端广播
         io.emit('login', {onlineCount: userArray.length, currenData: userArray[currentId]})
         console.log(userArray)

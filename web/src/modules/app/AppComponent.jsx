@@ -21,12 +21,13 @@ class AppComponent extends Component {
     }
 
     componentDidMount(){
-        
+    
         this.refs.quitBtn.disabled = false;
         var box = '';
 
         //接受退出信息
         socket.on('logout', function(data){
+            this.setState({popMsg:''})
             console.log('退出信息',data)
             if(data.userName != 'admin'){
                 this.setState({quitName: data.userName});
@@ -37,6 +38,7 @@ class AppComponent extends Component {
 
         //接受登录信息
         socket.on('login', function(data){
+            this.setState({popMsg:''})
             if(data){
                 this.setState({nameText: data.currenData.userName});
                 this.setState({onlineCount: data.onlineCount}); 
@@ -67,6 +69,8 @@ class AppComponent extends Component {
             createDiv.appendChild(createspan);
             createLi.appendChild(createDiv);
             this.refs.showMsg.appendChild(createLi);
+
+            this.refs.showMsg.scrollTo(0, this.refs.showMsg.scrollHeight);
         }.bind(this))
         
     }
@@ -115,16 +119,18 @@ class AppComponent extends Component {
         var char = e.which || e.keyCode;
         if(char == 13){
             this.sendMsg();
+            e.preventDefault()
         }
-        e.preventDefault()
+        
     }
 
     enterName(e){
         var char = e.which || e.keyCode;
         if(char == 13){
             this.sendName();
+            e.preventDefault()
         }
-        e.preventDefault()
+        
     }
 
     render() {
@@ -137,10 +143,11 @@ class AppComponent extends Component {
                     <ul className="showMsg" ref="showMsg"></ul>
                     
                     <div className="inputBox">
-                        <input type="text" className="form-control input-name"  placeholder="请输入你的昵称！" ref="name" onKeyDown={this.enterName.bind(this)}/>
+                        <input type="text" className="form-control input-name"  placeholder="请输入你的昵称！" ref="name" onKeyDown={this.enterName.bind(this)} />
                         <button type="submit" className="btn btn-default log-btn" ref="logBtn" onClick={this.sendName.bind(this)}>登录</button>
                         <button type="submit" className="btn btn-default" ref="quitBtn" onClick={this.quit.bind(this)} >退出</button>
                     </div>
+
                     <textarea className="form-control" rows="3" ref="msg" onKeyDown={this.enterMsg.bind(this)}></textarea>
                     <button type="submit" className="btn btn-success" onClick={this.sendMsg.bind(this)}>send</button>
                     {this.props.children}

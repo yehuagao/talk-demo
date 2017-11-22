@@ -20,7 +20,7 @@
 	.spanSty{
 		min-width:50px;
 		display:inline-block;
-		background:#ddd;
+		background:#F2F2F2;
 		line-height:36px;
 		padding:0 10px;
 		border-radius:3px;
@@ -51,6 +51,7 @@ ul,li{
 }
 .emoji-content{
 	width:500px;
+	display:none;
 	ul{overflow:hidden;
 		li{
 			float:left

@@ -50,7 +50,8 @@ class AppComponent extends Component {
         }.bind(this))
 
         socket.on('message', function(data){
-            
+            var emojiArr,str;
+            var emojiNo = [];
             var createspan = document.createElement('span');
             var createH6 = document.createElement('h6');
             var createDiv = document.createElement('div');
@@ -58,7 +59,25 @@ class AppComponent extends Component {
 
             createH6.innerText = data.userName + ':';
             createspan.className = 'spanSty';
-            createspan.innerText = data.content;
+            function getEmoji(_string){
+                emojiArr = _string.match(/\[emoji_[\d]+\]\;/);
+                var val = parseInt(emojiArr[0].replace(/[^\d]/g, ''));
+                emojiArr = [];
+                var pos = _string.indexOf('[emoji_');
+                str = _string.replace(/\[emoji_[\d]+\]\;/, '<img src="src/img/arclist/'+ val +'.gif"/>');
+                if(str.indexOf('[emoji_') >= 0){
+                    getEmoji(str);
+                }
+                return str;
+            }
+            //判断内容里是否存在emoji表情
+            if(data.content.indexOf('[emoji_') >= 0){
+                console.log('函数',getEmoji(data.content))
+                createspan.innerHTML = getEmoji(data.content);
+            }else{
+                createspan.innerHTML = data.content;
+            }
+            
 
             if(data.userName == this.state.currenName){
                 createDiv.style.float = 'right';
@@ -77,9 +96,11 @@ class AppComponent extends Component {
         var _that = this;
         //点击表情
         $('.emoji-content').on('click', 'li', function(){
-            console.log(this)
             _that.refs.msg.value += '[emoji_' + $(this).attr('data-id') + '];';
-
+            _that.refs.msg.focus();
+        })
+        $('.emoji-show').click(function(){
+            _that.refs.emojiShow.style.display = _that.refs.emojiShow.style.display == 'block' ? 'none' : 'block';
         })
         
     }
@@ -119,10 +140,6 @@ class AppComponent extends Component {
     }
 
     sendMsg(){
-        //判断是否有emoji图片
-        if(/^\[\emoji\_\d\]$/g.test(this.refs.msg.value)){
-
-        }
         socket.emit('message',{userName:this.state.currenName, content:this.refs.msg.value})
         this.refs.msg.value = '';
         this.refs.msg.focus();
@@ -174,7 +191,7 @@ class AppComponent extends Component {
                     <textarea className="form-control" rows="3" ref="msg" onKeyDown={this.enterMsg.bind(this)}></textarea>
                     <button type="submit" className="btn btn-success send-btn" onClick={this.sendMsg.bind(this)}>send</button>
                     <button type="submit" className="btn btn-info emoji-show" onClick={this.emoji.bind(this)}>表情</button>
-                    <div class="emoji-content">
+                    <div class="emoji-content" ref="emojiShow">
                         <ul>
                             {li()}
                         </ul>

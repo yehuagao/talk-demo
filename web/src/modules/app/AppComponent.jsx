@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import {Router, Route, Link, hashHistory, browserHistory} from 'react-router';
-import Popbox from '../comComponent/popBox.jsx'
+import Popbox from '../comComponent/popBox.jsx';
+import emoji from 'react-easy-emoji';
+import $ from 'jquery';
 import './App.scss'
-
 var socket = io.connect('ws://192.168.1.21:3000/');
     
 class AppComponent extends Component {
@@ -16,7 +17,8 @@ class AppComponent extends Component {
             currenName:'',
             onlineCount:0,
             quitName:'',
-            popMsg:''
+            popMsg:'',
+            picArr:[]
         }
     }
 
@@ -24,7 +26,6 @@ class AppComponent extends Component {
     
         this.refs.quitBtn.disabled = false;
         var box = '';
-
         //接受退出信息
         socket.on('logout', function(data){
             this.setState({popMsg:''})
@@ -72,6 +73,14 @@ class AppComponent extends Component {
 
             this.refs.showMsg.scrollTo(0, this.refs.showMsg.scrollHeight);
         }.bind(this))
+
+        var _that = this;
+        //点击表情
+        $('.emoji-content').on('click', 'li', function(){
+            console.log(this)
+            _that.refs.msg.value += '[emoji_' + $(this).attr('data-id') + '];';
+
+        })
         
     }
 
@@ -110,6 +119,10 @@ class AppComponent extends Component {
     }
 
     sendMsg(){
+        //判断是否有emoji图片
+        if(/^\[\emoji\_\d\]$/g.test(this.refs.msg.value)){
+
+        }
         socket.emit('message',{userName:this.state.currenName, content:this.refs.msg.value})
         this.refs.msg.value = '';
         this.refs.msg.focus();
@@ -132,8 +145,18 @@ class AppComponent extends Component {
         }
         
     }
+    emoji(){
+        
+    }
 
     render() {
+        function li(){
+            var allLi = [];
+            for(var i=1; i<76; i++){
+               allLi.push(<li data-id={i}><img src={'src/img/arclist/'+ i + '.gif'}/></li>)
+            }
+            return allLi;
+        }
         return (
         	   <div className="appmain">
                     {this.state.popMsg}
@@ -149,7 +172,13 @@ class AppComponent extends Component {
                     </div>
 
                     <textarea className="form-control" rows="3" ref="msg" onKeyDown={this.enterMsg.bind(this)}></textarea>
-                    <button type="submit" className="btn btn-success" onClick={this.sendMsg.bind(this)}>send</button>
+                    <button type="submit" className="btn btn-success send-btn" onClick={this.sendMsg.bind(this)}>send</button>
+                    <button type="submit" className="btn btn-info emoji-show" onClick={this.emoji.bind(this)}>表情</button>
+                    <div class="emoji-content">
+                        <ul>
+                            {li()}
+                        </ul>
+                    </div>
                     {this.props.children}
                </div>  		
         )

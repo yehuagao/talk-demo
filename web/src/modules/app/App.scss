@@ -43,3 +43,24 @@ ul,li{
 	overflow:hidden;
 	margin:0;padding:0;
 }
+.emoji-show{
+	float:left;
+}
+.send-btn{
+	float:right
+}
+.emoji-content{
+	width:500px;
+	ul{overflow:hidden;
+		li{
+			float:left
+		}
+	}
+	
+}
+img{
+	padding:2px;
+}
+img:hover{
+	background:#ddd;
+}
